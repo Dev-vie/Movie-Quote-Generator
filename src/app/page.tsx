@@ -1,103 +1,267 @@
+"use client";
+import { Button } from "@/components/ui/button";
+import { Facebook, Instagram, Twitter } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
+type Quote = {
+  id: number;
+  quote: string;
+  movie: string;
+  character: string;
+  poster_url: string | null;
+  character_url: string | null;
+};
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [quote, setQuote] = useState<Quote | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const fetchQuote = async () => {
+    try {
+      setError(null);
+      const res = await fetch("/api/quotes/random");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || `HTTP error! status: ${res.status}`);
+      }
+      const data: Quote = await res.json();
+      setQuote(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch quote");
+      setQuote(null);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
+  return (
+    <div
+      style={{
+        background: "linear-gradient( #0F172A, #1E293B, #111827)",
+        minHeight: "100vh",
+        fontFamily: "Indie Flower, sans-serif",
+      }}
+    >
+      <section
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          paddingTop: 80,
+          color: "#F9FAFB",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            gap: "65px",
+          }}
+        >
+          <h1 style={{ fontSize: "50px" }}>Movie Quote Generator</h1>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "10px",
+              alignContent: "center",
+              justifyContent: "center",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {/* Movie Poster */}
+            <div
+              style={{
+                border: "1px solid white",
+                borderRadius: "10px",
+                maxWidth: "500px",
+                maxHeight: "500px",
+              }}
+            >
+              {quote?.poster_url ? (
+                <Image
+                  src={quote.poster_url}
+                  alt={quote.movie}
+                  width={500}
+                  height={500}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "10px",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              ) : (
+                <p>Poster</p>
+              )}
+            </div>
+            {/* Content */}
+            <div
+              style={{
+                minWidth: "800px",
+                minHeight: "400px",
+                padding: "10px 20px",
+                borderRadius: "10px",
+                backgroundColor: "#1F2937",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                border: "2px solid white",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "36px",
+                  minHeight: "300px",
+                  maxWidth: "800px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  whiteSpace: "pre-line",
+                }}
+              >
+                {quote ? `"${quote.quote}"` : "Click Next Quote to start!"}
+              </p>
+              <p
+                style={{
+                  fontSize: "36px",
+                  minHeight: "100px",
+                  maxWidth: "800px",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  textAlign: "right",
+                }}
+              >
+                From
+                <span style={{ color: "#00d8feff", fontWeight: "bold" }}>
+                  &nbsp;{quote ? `${quote.movie}` : "Movie Name"}
+                </span>
+              </p>
+              <p
+                style={{
+                  fontSize: "36px",
+                  minHeight: "100px",
+                  maxWidth: "800px",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  textAlign: "right",
+                  marginTop: "-40px",
+                }}
+              >
+                -
+                <span style={{ color: "#d8ff28ff", fontWeight: "bold" }}>
+                  &nbsp;{quote ? `${quote.character}` : "Character Name"}
+                </span>
+              </p>
+            </div>
+            {/* Character Poster */}
+            <div
+              style={{
+                border: "1px solid white",
+                borderRadius: "10px",
+                maxWidth: "350px",
+                maxHeight: "500px",
+              }}
+            >
+              {quote?.character_url ? (
+                <Image
+                  src={quote.character_url}
+                  alt={quote.character}
+                  width={350}
+                  height={500}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "10px",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              ) : (
+                <p>Character</p>
+              )}
+            </div>
+          </div>
+          <Button
+            style={{ fontSize: "36px", padding: "10px" }}
+            onClick={fetchQuote}
           >
-            Read our docs
-          </a>
+            Next Quote
+          </Button>
+          <div
+            style={{
+              display: "flex",
+              gap: "25px",
+              alignItems: "center",
+              color: "#9CA3AF",
+              fontSize: "24px",
+              justifyContent: "center",
+            }}
+          >
+            <p>Follow Me:</p>
+            <Link
+              href="https://www.facebook.com/1dledev"
+              target="_blank"
+              rel="nooperner noreferrer"
+            >
+              <Button
+                variant="ghost"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  fontSize: "24px",
+                }}
+              >
+                <Facebook style={{ width: "40px", height: "40px" }} />
+                Dev Vie
+              </Button>
+            </Link>
+            <Link
+              href="https://www.instagram.com/just.devvie"
+              target="_blank"
+              rel="nooperner noreferrer"
+            >
+              <Button
+                variant="ghost"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  fontSize: "24px",
+                }}
+              >
+                <Instagram style={{ width: "40px", height: "40px" }} />
+                just.devvie
+              </Button>
+            </Link>
+            <Link
+              href="https://x.com/dev_vibe"
+              target="_blank"
+              rel="nooperner noreferrer"
+            >
+              <Button
+                variant="ghost"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  fontSize: "24px",
+                }}
+              >
+                <Twitter style={{ width: "40px", height: "40px" }} />
+                Dev
+              </Button>
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
     </div>
   );
 }
