@@ -1,6 +1,7 @@
 # Movie Quote Generator
 
 **Project Title:** Movie Quote Generator
+
 **Author:** Noeun Soksokunmengfong
 
 ## Description
