@@ -15,11 +15,9 @@ type Quote = {
 };
 export default function Home() {
   const [quote, setQuote] = useState<Quote | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchQuote = async () => {
     try {
-      setError(null);
       const res = await fetch("/api/quotes/random");
       if (!res.ok) {
         const errData = await res.json();
@@ -27,9 +25,12 @@ export default function Home() {
       }
       const data: Quote = await res.json();
       setQuote(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch quote");
-      setQuote(null);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setQuote(null);
+      } else {
+        setQuote(null);
+      }
     }
   };
 
