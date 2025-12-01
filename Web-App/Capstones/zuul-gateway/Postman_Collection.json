@@ -1,0 +1,293 @@
+{
+  "info": {
+    "name": "Personal Finance Gateway - Test Collection",
+    "description": "Test collection for Spring Cloud Gateway (Zuul replacement)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Gateway Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/actuator/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["actuator", "health"]
+        },
+        "description": "Check if the gateway is running and healthy"
+      }
+    },
+    {
+      "name": "Gateway Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/actuator/info",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["actuator", "info"]
+        }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Login through gateway to user-auth-service"
+      }
+    },
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Transactions - Get All",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "description": "JWT token from login"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transactions"]
+        },
+        "description": "Get all transactions through gateway"
+      }
+    },
+    {
+      "name": "Transactions - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"expense\",\n  \"category\": \"food\",\n  \"amount\": 25.50,\n  \"description\": \"Lunch\",\n  \"date\": \"2025-11-25\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transactions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transactions"]
+        }
+      }
+    },
+    {
+      "name": "Transactions - Get By ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transactions", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Transactions - Update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"type\": \"expense\",\n  \"category\": \"food\",\n  \"amount\": 30.00,\n  \"description\": \"Lunch - Updated\",\n  \"date\": \"2025-11-25\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/transactions/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transactions", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Transactions - Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/transactions/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "transactions", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Analytics - Get Reports",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/analytics/reports",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "analytics", "reports"]
+        },
+        "description": "Get analytics reports through gateway"
+      }
+    },
+    {
+      "name": "Analytics - Get Summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/analytics/summary?period=monthly",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "analytics", "summary"],
+          "query": [
+            {
+              "key": "period",
+              "value": "monthly"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Analytics - Get Chart Data",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/analytics/charts?type=category",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "analytics", "charts"],
+          "query": [
+            {
+              "key": "type",
+              "value": "category"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
